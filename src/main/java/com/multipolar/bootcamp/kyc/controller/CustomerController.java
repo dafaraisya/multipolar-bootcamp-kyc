@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,7 +16,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/customers")
-@Validated
 public class CustomerController {
     private final CustomerService customerService;
 
@@ -69,5 +67,19 @@ public class CustomerController {
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
         customerService.deleteCustomerById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("nik/{nik}")
+    public ResponseEntity<Customer> getCustomerByNik(@PathVariable String nik) {
+        Optional<Customer> customer = customerService.getCustomerByNik(nik);
+        return customer.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("name/{name}")
+    public ResponseEntity<List<Customer>> getCustomerByName(@PathVariable String name) {
+//        List<Customer> customer = customerService.getCustomerByName(name);
+//        return customerService.getCustomerByName(name);
+        List<Customer> customers = customerService.getCustomerByName(name);
+        return ResponseEntity.ok(customers);
     }
 }
